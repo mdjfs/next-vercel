@@ -39,11 +39,6 @@ const PokemonPage: FC<Props> = ({ pokemon }) => {
               <Text h1 transform="capitalize">
                 {pokemon.name}
               </Text>
-              <Link href="/">
-                <Button color="gradient" ghost>
-                  Volver al menú
-                </Button>
-              </Link>
               {/*<Button color="gradient" ghost>
                 Guardar en favoritos
             </Button>*/}
