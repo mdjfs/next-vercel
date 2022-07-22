@@ -1,19 +1,36 @@
 import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react";
+import confetti from "canvas-confetti";
 import { GetStaticPaths, GetStaticProps } from "next";
-import Link from "next/link";
 import { FC } from "react";
 import { pokeApi } from "../../api";
 import { Layout } from "../../components/layouts";
-import { Pokemon } from "../../interfaces";
+import { useFavorite } from "../../hooks";
+import { useRememberScroll } from "../../hooks/useRememberScroll";
+import { Pokemon, PokemonListResponse } from "../../interfaces";
 
 interface Props {
   pokemon: Pokemon;
 }
 
 const PokemonPage: FC<Props> = ({ pokemon }) => {
-  console.log(pokemon);
+  const { isFavorite, setFavorite, removeFavorite } = useFavorite(pokemon.id);
+
+  const setFavoriteAndFUN = () => {
+    setFavorite();
+    confetti({
+      zIndex: 999,
+      particleCount: 100,
+      spread: 160,
+      angle: -100,
+      origin: {
+        x: 1,
+        y: 0,
+      },
+    });
+  };
+
   return (
-    <Layout title="Algun pokemón">
+    <Layout title={pokemon.name}>
       <Grid.Container css={{ marginTop: "5px" }} gap={2}>
         <Grid xs={12} sm={4}>
           <Card isHoverable css={{ padding: "30px" }}>
@@ -33,15 +50,24 @@ const PokemonPage: FC<Props> = ({ pokemon }) => {
 
         <Grid xs={12} sm={8}>
           <Card>
-            <Card.Header
-              css={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <Text h1 transform="capitalize">
-                {pokemon.name}
-              </Text>
-              {/*<Button color="gradient" ghost>
-                Guardar en favoritos
-            </Button>*/}
+            <Card.Header>
+              <Grid.Container>
+                <Grid xs={12} sm={8} justify="flex-start" alignItems="center">
+                  <Text css={{ margin: 5 }} h1 transform="capitalize">
+                    {pokemon.name}
+                  </Text>
+                </Grid>
+                <Grid xs={12} sm={4} justify="flex-start" alignItems="center">
+                  <Button
+                    css={{ margin: 5 }}
+                    color="gradient"
+                    ghost
+                    onClick={isFavorite ? removeFavorite : setFavoriteAndFUN}
+                  >
+                    {isFavorite ? "En favoritos" : "Guardar en Favoritos"}
+                  </Button>
+                </Grid>
+              </Grid.Container>
             </Card.Header>
             <Card.Body>
               <Text size={30}>Sprites:</Text>
@@ -89,6 +115,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       pokemon: {
+        id,
         name: data.name,
         sprites: data.sprites,
       },
@@ -97,8 +124,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
-  const paths = [...new Array(151)].map((_, i) => ({
-    params: { id: (i + 1).toString() },
+  const { data } = await pokeApi.get<PokemonListResponse>("/pokemon?limit=151");
+
+  const paths = data.results.map((v) => ({
+    params: { id: v.name },
   }));
 
   return {

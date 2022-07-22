@@ -3,6 +3,7 @@ import type { GetStaticProps, NextPage } from "next";
 import { pokeApi } from "../api";
 import { Layout } from "../components/layouts";
 import { PokemonCard } from "../components/pokemon";
+import { useRememberScroll } from "../hooks";
 import { PokemonListResponse, SmallPokemon } from "../interfaces";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ pokemons }) => {
+  useRememberScroll("home-page");
   return (
     <Layout title="Pokemon App">
       <Grid.Container gap={2} justify="flex-start">

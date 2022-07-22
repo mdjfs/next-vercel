@@ -14,6 +14,9 @@ export const Navbar = () => {
   return (
     <div
       style={{
+        top: 0,
+        zIndex: 9999999,
+        position: "fixed",
         display: "flex",
         width: "100%",
         flexDirection: "row",
@@ -42,11 +45,11 @@ export const Navbar = () => {
 
       <Spacer css={{ flex: 1 }} />
 
-      {/*<NextLink href="/favoritos" passHref>
+      <NextLink href="/favoritos" passHref>
         <Link>
           <Text color="white">Favoritos</Text>
         </Link>
-    </NextLink>*/}
+      </NextLink>
     </div>
   );
 };
